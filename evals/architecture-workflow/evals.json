@@ -18,6 +18,33 @@
       "prompt": "I need a full health check on our taskboard project. It's a full-stack app: FastAPI backend, Next.js frontend, and Terraform infrastructure on AWS. Everything is at evals/files/fullstack_app/ — backend/main.py has the API, frontend/src/pages/Dashboard.jsx is the main page, and infra/main.tf is our Terraform. Can you audit the whole thing, fix what you can, and document the final state?",
       "expected_output": "A phased workflow that applies MULTIPLE review lenses (python-architecture-review for the backend, modern-web-app-architecture for the frontend, cloud-infrastructure for the Terraform) and produces a unified diagnosis across all three layers.",
       "files": ["evals/files/fullstack_app/backend/main.py", "evals/files/fullstack_app/frontend/src/pages/Dashboard.jsx", "evals/files/fullstack_app/frontend/package.json", "evals/files/fullstack_app/infra/main.tf"]
+    },
+    {
+      "id": 4,
+      "prompt": "I have a React + TypeScript investment dashboard with a monolithic 480-line API client at src/lib/api.ts. It handles market data, portfolio management, and user settings all in one file. The types and functions are mixed together, and there's cross-domain calls between market and portfolio. Can you audit this, fix what needs fixing, and document the result? The code is at evals/files/monolithic_ts_app/",
+      "expected_output": "A phased workflow that identifies the monolithic api.ts as structural debt but correctly classifies file splitting as HIGH risk due to cross-domain dependencies (MarketData used in PortfolioHolding, shared baseFetch helper, getMarketDataBatch called by portfolio functions). Must apply compilation gates and git checkpoints if any structural changes are attempted. Must NOT naively split by line ranges or domain boundaries without verifying each split file compiles independently.",
+      "files": ["evals/files/monolithic_ts_app/src/lib/api.ts", "evals/files/monolithic_ts_app/src/components/Dashboard.tsx", "evals/files/monolithic_ts_app/src/components/Portfolio.tsx", "evals/files/monolithic_ts_app/package.json", "evals/files/monolithic_ts_app/tsconfig.json"],
+      "assertions": {
+        "file_split_safety": [
+          "Identifies cross-domain type dependencies (MarketData in PortfolioHolding)",
+          "Identifies shared helpers (baseFetch, formatError, createTimeoutPromise) as split blockers",
+          "Identifies cross-domain function calls (portfolio functions calling market functions)",
+          "Classifies file split as HIGH or CRITICAL risk",
+          "References compilation gates or build verification",
+          "References git checkpoints or rollback points",
+          "Does NOT recommend naive line-range splitting",
+          "Does NOT attempt to split without verifying each file compiles independently",
+          "Recommends preserving original file until splits are proven",
+          "If splitting is attempted: limits to 3-5 modules per round"
+        ],
+        "standard_workflow": [
+          "Follows 4-phase workflow (Discover, Diagnose, Fix, Document)",
+          "Produces health score with dimensional ratings",
+          "Produces findings table with severity and effort",
+          "References TDD for fixes",
+          "Produces before/after comparison"
+        ]
+      }
     }
   ]
 }
