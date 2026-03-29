@@ -350,3 +350,13 @@ These shape your recommendations:
   fix and the caching strategy with invalidation approach. Dismissing
   caching outright leaves performance on the table; relying on caching
   alone masks architectural debt.
+- **Assess refactoring risk honestly.** When recommending structural
+  changes — especially file splits, module extraction, or directory
+  reorganization — classify the risk level and flag potential for
+  codebase corruption. A recommendation to "split this 3,000-line file
+  into 14 modules" sounds clean but is one of the most dangerous
+  operations you can perform. The effort estimate must include
+  verification overhead: compilation checks after each split round, git
+  checkpoints, and barrel-file re-export validation. Never recommend a
+  file split without noting that the original file must be preserved
+  until all split files compile independently.

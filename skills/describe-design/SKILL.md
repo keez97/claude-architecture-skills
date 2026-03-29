@@ -515,6 +515,34 @@ Pick any endpoint (e.g., `/api/orders/{id}`):
 - You want to identify architectural debt or coupling
 - You're preparing for a system redesign and need current-state docs
 
+## Risk Classification for Structural Recommendations
+
+When the discovery process reveals large files, monolithic modules, or tightly-coupled
+code, you may be tempted to recommend splitting or restructuring. Document these
+observations, but always include a risk classification.
+
+**Observations that suggest structural changes:**
+- A single file over 1,000 lines handling multiple domains
+- A `utils.py` or `helpers.ts` imported by half the codebase
+- Mixed concerns: route handlers doing database queries and business logic
+
+**How to document these responsibly:**
+
+Instead of: "Split `api.ts` (2,941 lines) into 14 domain-specific modules."
+
+Write: "**Structural debt:** `api.ts` (2,941 lines) handles market data, portfolio
+management, and regime detection in a single file. This is a candidate for modular
+extraction, but splitting is a **high-risk operation** — the file has 105 exports
+consumed across 40+ components. Any split must preserve all exports via barrel
+re-exports, compile independently per module, and be done in incremental rounds
+with git checkpoints. See the architecture-workflow file-split protocol before
+attempting."
+
+The goal of describe-design is to document what IS, not to execute changes. When
+noting structural debt, quantify it (line count, export count, consumer count) and
+flag the risk level so that whoever acts on the recommendation knows what they're
+getting into.
+
 ---
 
 ## Output Checklist

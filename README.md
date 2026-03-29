@@ -118,6 +118,34 @@ Detailed documentation per skill in `docs/`:
 - `docs/modern-web-app-architecture.md` — rendering strategies (SSR/SSG/ISR), bundle analysis, state management patterns
 - `docs/describe-design.md` — diagram generation, reverse-engineering process, supported diagram types
 
+## Safety: Structural Refactoring Protection
+
+These skills recommend architectural improvements, and some recommendations involve
+structural changes — splitting large files, extracting modules, reorganizing
+directories. These are **the most dangerous refactoring operations** because they
+touch import chains across the entire codebase and can silently corrupt code.
+
+### What's Protected
+
+The `architecture-workflow` skill includes mandatory safety protocols:
+
+- **Compilation gates** after every fix — the project must build before proceeding
+- **Git checkpoints** after every verified fix — clean rollback points
+- **File-split protocol** (`skills/architecture-workflow/references/file-split-protocol.md`) — a step-by-step protocol for safely splitting large files
+- **Risk classification** in Phase 2 — every structural recommendation is flagged with a risk level
+- **Integration gate** at the end of Phase 3 — full build + test verification before documenting
+
+All review skills (python-architecture-review, modern-web-app-architecture,
+software-architecture, describe-design) include risk assessment guidance for
+structural recommendations.
+
+### The Core Rule
+
+**A working monolith is always better than a broken set of small files.**
+
+Never split a file by line ranges. Never delete the original until all split files
+compile. Never skip the compilation check. See the file-split protocol for details.
+
 ## Quick Start
 
 1. Install `architecture-workflow` skill

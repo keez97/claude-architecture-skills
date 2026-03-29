@@ -399,6 +399,31 @@ export function PostList() {
 - Hydration mismatches (server renders X, client renders Y)
 - No pagination on large lists (performance cliff)
 
+### Refactoring Risk: File Splits and Module Extraction
+
+When recommending that a large file be split into smaller modules (e.g., splitting
+a monolithic `api.ts` into `market.ts`, `portfolio.ts`, etc.), you must flag this
+as a **high-risk structural operation**. File splits in frontend codebases are
+particularly dangerous because:
+
+- TypeScript/JavaScript barrel files (`index.ts`) have subtle re-export semantics
+  — `export *` does NOT forward default exports
+- Vite/webpack module resolution caches can serve stale errors after file moves
+- Import chains cascade — one broken split file can error 50+ consumers
+- Function declarations, interfaces, and type definitions span multiple lines and
+  cannot be split by line ranges
+
+**When recommending a file split:**
+1. Flag the risk level explicitly (HIGH or CRITICAL)
+2. Note that the original file must be preserved until all splits compile
+3. Recommend splitting in rounds of 3-5 modules with compilation checks between rounds
+4. Include barrel-file re-export requirements (especially default exports)
+5. Estimate effort to include verification overhead, not just the code moves
+
+A 3,000-line file that works is better than 14 broken 200-line files. Only recommend
+splitting when the benefits clearly outweigh the risk, and always include the
+verification protocol in your recommendation.
+
 ### Key Principles
 
 1. **Rendering strategy drives everything else.** Choose this first.
@@ -408,4 +433,6 @@ export function PostList() {
 5. **State should live near where it's used.** Lift only when necessary.
 6. **URL is state.** Filters, search, pagination belong in params, not Redux.
 7. **Progressive enhancement.** Forms should work without JavaScript if possible.
+8. **Verify before you delete.** Any structural change (file moves, splits, renames)
+   must pass a full build check before the old structure is removed.
 

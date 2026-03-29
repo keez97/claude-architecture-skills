@@ -428,6 +428,46 @@ app.use(UserService(PostgreSQLUserRepository(...)))
 
 ---
 
+## Destructive Operations: Structural Refactoring Safety
+
+Architecture reviews often recommend structural changes: splitting monolithic files,
+extracting modules, reorganizing directories, changing barrel exports. These are
+among the most dangerous operations in software development because they touch
+import chains across the entire codebase and can silently corrupt code.
+
+### Risk Classification
+
+Every structural recommendation must include a risk classification:
+
+| Risk Level | Operation Type | Required Protocol |
+|------------|---------------|-------------------|
+| **Low** | Single-file refactoring, function extraction within a file | Standard review |
+| **Medium** | Extracting code to a new file, adding a new module | Build verification after change |
+| **High** | Splitting files into multiple modules, restructuring directories | Write → Verify → Delete order, git checkpoints per round |
+| **Critical** | Changing build config, module boundaries, or project structure | User approval + full file-split protocol |
+
+### The File Split Trap
+
+The most common destructive mistake: recommending that a large file (1,000+ lines)
+be split into many smaller modules. This sounds like good architecture advice, and
+it often is — but the *execution* is where codebases get destroyed.
+
+What goes wrong:
+- Text-based splitting cuts function bodies in half
+- Interfaces get truncated mid-definition
+- Orphaned closing braces become syntax errors in downstream files
+- Barrel files miss re-exports, breaking every consumer
+- `export *` doesn't forward default exports (TypeScript/JavaScript trap)
+
+When recommending a file split:
+1. Classify it as HIGH or CRITICAL risk
+2. Estimate effort including verification overhead (not just the code move)
+3. Note that the original file must be preserved until all splits compile
+4. Recommend incremental rounds of 3-5 files maximum per round
+5. Require full compilation check between rounds
+
+**A working monolith is always better than a broken set of small files.**
+
 ## Next Steps
 
 1. **Capture decisions as ADRs** — even retrofit existing systems
@@ -435,3 +475,5 @@ app.use(UserService(PostgreSQLUserRepository(...)))
 3. **Plan migration path** — phased refactoring toward target architecture
 4. **Measure progress** — coupling metrics, test coverage, time-to-feature
 5. **Revisit annually** — scale changes, team changes, tech changes invalidate old decisions
+6. **Verify structural changes** — any refactoring that moves code between files
+   requires compilation gates and git checkpoints
