@@ -1,0 +1,53 @@
+{
+  "skill_name": "modern-web-app-architecture",
+  "iteration": 1,
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "B2B SaaS dashboard rendering and state strategy",
+      "with_skill": {
+        "scores": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        "total": 10,
+        "out_of": 10,
+        "tokens": 51236,
+        "duration_ms": 61467,
+        "notes": "Comprehensive ADR-driven architecture with explicit trade-offs, performance budgets, and complete implementation patterns. Clear boundaries, detailed rationale, and upgrade paths."
+      },
+      "without_skill": {
+        "scores": [1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+        "total": 9,
+        "out_of": 10,
+        "tokens": 48749,
+        "duration_ms": 73108,
+        "notes": "Strong hybrid architecture with good implementation details and code examples. Missing explicit trade-off consequences and detailed discussion of rendering strategy trade-offs."
+      }
+    },
+    {
+      "id": 2,
+      "prompt": "Slow Next.js app performance review (Lighthouse 45, 1.2MB bundle)",
+      "with_skill": {
+        "scores": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        "total": 10,
+        "out_of": 10,
+        "tokens": 50050,
+        "duration_ms": 58635,
+        "notes": "Comprehensive review with detailed architecture health scoring, explicit effort estimates for each finding, specific bundle reduction strategies, before/after code patterns, phased migration plan with weekly targets."
+      },
+      "without_skill": {
+        "scores": [1, 1, 1, 0, 1, 1, 1, 1, 1, 0],
+        "total": 8,
+        "out_of": 10,
+        "tokens": 44210,
+        "duration_ms": 47235,
+        "notes": "Strong foundational analysis with clear problem diagnosis, code splitting examples, Core Web Vitals coverage, and phased roadmap. Missing specific image optimization strategies and granular effort estimates."
+      }
+    }
+  ],
+  "summary": {
+    "with_skill_avg": 10.0,
+    "without_skill_avg": 8.5,
+    "delta": 1.5,
+    "with_skill_pass_rate": 1.0,
+    "without_skill_pass_rate": 0.85
+  }
+}

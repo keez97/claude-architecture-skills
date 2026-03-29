@@ -1,0 +1,23 @@
+{
+  "skill_name": "architecture-workflow",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have this Flask e-commerce app that's been growing organically and it's getting messy. Can you do a full architecture audit — understand what's there, find the problems, fix the critical ones, and then document the final state? The app is at evals/files/messy_flask_app/app.py",
+      "expected_output": "A phased workflow that discovers the codebase structure, produces a structured diagnosis with health scores and prioritized findings, fixes critical issues with tests, and documents the improved architecture with before/after comparison.",
+      "files": ["evals/files/messy_flask_app/app.py", "evals/files/messy_flask_app/requirements.txt"]
+    },
+    {
+      "id": 2,
+      "prompt": "I just inherited a FastAPI codebase and I need to get it into shape. Can you go through it systematically — map out the architecture, identify what needs fixing, then actually fix the worst issues and give me updated documentation? The code is at evals/files/messy_fastapi_app/main.py",
+      "expected_output": "A phased workflow progressing through discovery, diagnosis with the python-architecture-review lens, TDD fixes for critical findings, and final documentation with before/after health score comparison.",
+      "files": ["evals/files/messy_fastapi_app/main.py"]
+    },
+    {
+      "id": 3,
+      "prompt": "I need a full health check on our taskboard project. It's a full-stack app: FastAPI backend, Next.js frontend, and Terraform infrastructure on AWS. Everything is at evals/files/fullstack_app/ — backend/main.py has the API, frontend/src/pages/Dashboard.jsx is the main page, and infra/main.tf is our Terraform. Can you audit the whole thing, fix what you can, and document the final state?",
+      "expected_output": "A phased workflow that applies MULTIPLE review lenses (python-architecture-review for the backend, modern-web-app-architecture for the frontend, cloud-infrastructure for the Terraform) and produces a unified diagnosis across all three layers.",
+      "files": ["evals/files/fullstack_app/backend/main.py", "evals/files/fullstack_app/frontend/src/pages/Dashboard.jsx", "evals/files/fullstack_app/frontend/package.json", "evals/files/fullstack_app/infra/main.tf"]
+    }
+  ]
+}

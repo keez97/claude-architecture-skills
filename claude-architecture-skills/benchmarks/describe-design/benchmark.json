@@ -1,0 +1,53 @@
+{
+  "skill_name": "describe-design",
+  "iteration": 1,
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Architecture documentation for inherited FastAPI codebase",
+      "with_skill": {
+        "scores": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        "total": 10,
+        "out_of": 10,
+        "tokens": 60868,
+        "duration_ms": 106133,
+        "notes": "Comprehensive documentation with Mermaid diagrams, deep coupling analysis, failure modes, onboarding guide, and architectural checklists. Includes C4 diagrams, multiple sequence diagrams, ERD, deployment architecture."
+      },
+      "without_skill": {
+        "scores": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        "total": 10,
+        "out_of": 10,
+        "tokens": 48903,
+        "duration_ms": 54276,
+        "notes": "Complete architectural documentation with text-based diagrams, detailed flows, data model mapping, design patterns, integrations, and deployment considerations. Thorough but lacks Mermaid visualizations and advanced architectural analysis."
+      }
+    },
+    {
+      "id": 2,
+      "prompt": "Onboarding documentation for new engineers joining the team",
+      "with_skill": {
+        "scores": [1, 1, 1, 1, 1, 1, 1, 0, 1, 1],
+        "total": 9,
+        "out_of": 10,
+        "tokens": 57125,
+        "duration_ms": 68773,
+        "notes": "Comprehensive onboarding guide with excellent structure mapping, detailed request lifecycle trace, strong diagrams, extensive external integration documentation. Missing in-depth testing framework documentation."
+      },
+      "without_skill": {
+        "scores": [1, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+        "total": 6,
+        "out_of": 10,
+        "tokens": 46050,
+        "duration_ms": 36213,
+        "notes": "Solid foundational guide with good directory structure and common task documentation. Lacks diagrams, detailed request lifecycle tracing, comprehensive external dependency documentation, and deeper domain model explanation."
+      }
+    }
+  ],
+  "summary": {
+    "with_skill_avg": 9.5,
+    "without_skill_avg": 8.0,
+    "delta": 1.5,
+    "with_skill_pass_rate": 0.95,
+    "without_skill_pass_rate": 0.80
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "skill_name": "architecture-workflow",
+  "iteration": 2,
+  "configs": [
+    {
+      "name": "with_skill",
+      "pass_rate": {"mean": 0.978, "stddev": 0.022},
+      "time": {"mean": 251.8, "stddev": 82.6},
+      "tokens": {"mean": 83977, "stddev": 14715}
+    },
+    {
+      "name": "without_skill",
+      "pass_rate": {"mean": 0.493, "stddev": 0.059},
+      "time": {"mean": 141.7, "stddev": 73.3},
+      "tokens": {"mean": 65352, "stddev": 16258}
+    }
+  ],
+  "delta": {
+    "pass_rate": "+48.5%",
+    "time": "+110s slower (more structured output)",
+    "tokens": "+18625 more"
+  },
+  "evals": [
+    {
+      "eval_name": "flask-ecommerce-full-audit",
+      "with_skill": {"pass_rate": 1.0, "passed": 15, "of": 15, "time": 165.2, "tokens": 69870},
+      "without_skill": {"pass_rate": 0.467, "passed": 7, "of": 15, "time": 99.7, "tokens": 56414}
+    },
+    {
+      "eval_name": "fastapi-inherited-codebase",
+      "with_skill": {"pass_rate": 1.0, "passed": 15, "of": 15, "time": 263.7, "tokens": 82864},
+      "without_skill": {"pass_rate": 0.600, "passed": 9, "of": 15, "time": 93.7, "tokens": 53205}
+    },
+    {
+      "eval_name": "fullstack-taskboard-multi-lens",
+      "with_skill": {"pass_rate": 1.0, "passed": 18, "of": 18, "time": 326.5, "tokens": 99196},
+      "without_skill": {"pass_rate": 0.556, "passed": 10, "of": 18, "time": 231.6, "tokens": 86438}
+    }
+  ],
+  "analyst_observations": [
+    "Iteration 2 improved from 96.7% → 97.8% with-skill pass rate (TDD fix landed — eval 1 now 15/15 vs 14/15 in iter 1)",
+    "The TDD red-green-refactor assertion now passes 100% with-skill (was 50% in iteration 1) — the strongest improvement from the skill revision",
+    "Multi-lens eval (eval 3) achieved perfect 18/18 with-skill, demonstrating the dynamic skill selection works across backend/frontend/infra",
+    "Without-skill baseline improved slightly on eval 2 (6→9) but this appears to be variance, not a trend",
+    "Most discriminating assertions: Health Score (100% vs 0%), Dependency Map (100% vs 0%), TDD Reference (100% vs 0%), What's Working Well (100% vs 17%)",
+    "Non-discriminating assertions: before/after code examples (100% vs 100%) — Claude produces these naturally",
+    "The multi-lens assertions (16-18) show 100% with-skill vs 100% without — Claude naturally reviews all layers of a full-stack project regardless of skill. The skill's value is in the structured format, not the coverage."
+  ],
+  "comparison_to_iteration_1": {
+    "iter1_with_skill_avg": 0.967,
+    "iter2_with_skill_avg": 0.978,
+    "improvement": "+1.1%",
+    "key_fix": "TDD assertion now passes 100% (was 50%), Phase 2 checkpoint template more consistent"
+  }
+}

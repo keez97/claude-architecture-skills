@@ -1,0 +1,53 @@
+{
+  "skill_name": "microservices-architect",
+  "iteration": 1,
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Django monolith migration assessment for 6-person team",
+      "with_skill": {
+        "scores": [1, 1, 1, 1, 1, 0, 1, 1, 1, 1],
+        "total": 9,
+        "out_of": 10,
+        "tokens": 56491,
+        "duration_ms": 98991,
+        "notes": "Comprehensive migration assessment with Strangler Fig, event-driven architecture, database-per-service, resilience patterns, and detailed phased rollout. Missing explicit before/after diagram comparison."
+      },
+      "without_skill": {
+        "scores": [1, 1, 0, 0, 0, 1, 1, 0, 0, 1],
+        "total": 5,
+        "out_of": 10,
+        "tokens": 42744,
+        "duration_ms": 51583,
+        "notes": "Conservative hybrid approach extracting order service with shared database and synchronous RPC only. Defers async messaging, distributed databases, and complex resilience patterns."
+      }
+    },
+    {
+      "id": 2,
+      "prompt": "Saga pattern redesign for 3 fragile sync microservices",
+      "with_skill": {
+        "scores": [1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+        "total": 9,
+        "out_of": 10,
+        "tokens": 56521,
+        "duration_ms": 73273,
+        "notes": "Excellent technical depth with full Python implementation, comprehensive compensation logic, DLQ patterns, FMEA analysis. Missing explicit choreography vs orchestration comparison."
+      },
+      "without_skill": {
+        "scores": [1, 1, 1, 1, 1, 0, 1, 1, 1, 1],
+        "total": 9,
+        "out_of": 10,
+        "tokens": 44795,
+        "duration_ms": 50216,
+        "notes": "Strong JS pseudocode and clear choreography vs orchestration comparison. Weaker on specific technology rationale and DLQ implementation details."
+      }
+    }
+  ],
+  "summary": {
+    "with_skill_avg": 9.0,
+    "without_skill_avg": 7.0,
+    "delta": 2.0,
+    "with_skill_pass_rate": 0.90,
+    "without_skill_pass_rate": 0.70
+  }
+}

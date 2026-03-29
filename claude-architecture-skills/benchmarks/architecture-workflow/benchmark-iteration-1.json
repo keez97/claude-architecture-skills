@@ -1,0 +1,43 @@
+{
+  "skill_name": "architecture-workflow",
+  "iteration": 1,
+  "configs": [
+    {
+      "name": "with_skill",
+      "pass_rate": {"mean": 0.967, "stddev": 0.033},
+      "time": {"mean": 150.7, "stddev": 2.8},
+      "tokens": {"mean": 65282, "stddev": 390}
+    },
+    {
+      "name": "without_skill",
+      "pass_rate": {"mean": 0.400, "stddev": 0.0},
+      "time": {"mean": 99.5, "stddev": 7.5},
+      "tokens": {"mean": 57018, "stddev": 1938}
+    }
+  ],
+  "delta": {
+    "pass_rate": "+56.7%",
+    "time": "+51.2s slower",
+    "tokens": "+8264 more"
+  },
+  "evals": [
+    {
+      "eval_name": "flask-ecommerce-full-audit",
+      "with_skill": {"pass_rate": 0.933, "time": 147.9, "tokens": 65672},
+      "without_skill": {"pass_rate": 0.400, "time": 92.0, "tokens": 55080}
+    },
+    {
+      "eval_name": "fastapi-inherited-codebase",
+      "with_skill": {"pass_rate": 1.0, "time": 153.5, "tokens": 64892},
+      "without_skill": {"pass_rate": 0.400, "time": 107.0, "tokens": 58955}
+    }
+  ],
+  "analyst_observations": [
+    "The skill produces a +57% lift in structural adherence to the 4-phase workflow pattern",
+    "Without the skill, Claude produces useful analysis but unstructured — no health scores, no dependency maps, no TDD references",
+    "The TDD reference in Phase 3 is the most discriminating assertion — 50% with-skill vs 0% without",
+    "Health score and dependency map assertions are also highly discriminating (100% vs 0%)",
+    "Architecture diagrams and before/after code pass regardless of skill — these are non-discriminating",
+    "The with-skill runs take ~50% longer due to the more structured output, which is expected"
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "skill_name": "python-architecture-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Hey, can you review this FastAPI app I've been building? It's an e-commerce backend — users, products, orders. Everything's in one file right now which I know isn't ideal, but I want to know what the biggest issues are and how I should refactor it. The main.py is at evals/files/messy_fastapi_app/main.py",
+      "expected_output": "A structured review with health score, findings table with severity/impact/effort, dependency map between issues, before/after code transformations, and a phased migration sequence.",
+      "files": ["evals/files/messy_fastapi_app/main.py"],
+      "expectations": [
+        "Includes an Architecture Health Score or equivalent visual/structured assessment rating multiple dimensions",
+        "Presents findings in a structured table or list with explicit severity levels (CRITICAL/HIGH/MEDIUM/LOW or equivalent)",
+        "Quantifies impact of findings — uses numbers, not just adjectives (e.g., query counts, request times, user counts affected)",
+        "Shows a dependency map or relationship between findings — which fixes unlock or enable other fixes",
+        "Provides before/after code examples for at least 2 major findings (not just descriptions of what to change)",
+        "Includes effort estimates for fixes (time-based like hours/days, or relative like Quick/Moderate/Significant)",
+        "Proposes a phased migration sequence — not just 'fix these things' but an ordered plan for getting from current state to target state",
+        "Identifies plaintext password storage as a critical security issue",
+        "Flags the hardcoded DATABASE_URL with credentials in source code",
+        "Identifies the raw SQL query as a SQL injection risk",
+        "Points out the N+1 query problem with quantified impact (specific query count)",
+        "Points out the register endpoint returns the password in the response",
+        "Notes the lack of proper authentication (get_current_user is hardcoded)",
+        "Identifies the non-RESTful route naming",
+        "Ends with specific acknowledgment of what's done well in the codebase"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I'm building a multi-tenant SaaS platform for managing restaurant reservations. Each restaurant is a tenant. Core features: restaurant owners manage their tables, hours, and menus. Customers browse restaurants, book tables with party size and time, get confirmation emails. We need a waitlist for when tables aren't available. The frontend is Next.js, this backend will be FastAPI + PostgreSQL. We expect maybe 50 restaurants at launch, growing to 500+ in a year. How should I architect this?",
+      "expected_output": "A design document with ADRs for key decisions, concrete schema, API surface, implementation patterns, scale notes, and explicit trade-offs.",
+      "files": [],
+      "expectations": [
+        "Includes Architecture Decision Records (ADRs) or equivalent formal decision documentation with rationale and alternatives considered",
+        "Proposes a multi-tenancy strategy with explicit rationale for the choice at this scale",
+        "Designs a PostgreSQL schema with table definitions, constraints, and index strategy with rationale for each index",
+        "Defines API endpoints grouped by domain with request/response shapes",
+        "Addresses double-booking prevention with a concrete implementation pattern (code or pseudocode, not just description)",
+        "Describes the waitlist mechanism with promotion logic",
+        "Includes Scale & Evolution notes — what's the first bottleneck, what changes at 10x",
+        "Includes an explicit Trade-offs section discussing what's optimized for vs. what's sacrificed",
+        "Provides at least 2 concrete code patterns (not just descriptions) for key implementation challenges"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I have a FastAPI app that's getting slow. The main bottleneck is our /api/dashboard endpoint that aggregates data from orders, payments, and inventory tables for an admin dashboard. It runs about 15 queries and takes 3-4 seconds. We're using sync SQLAlchemy with PostgreSQL. About 100k orders, 50k payments, 200k inventory records. What's the best approach to speed this up? I don't want to just slap a cache on it — I want to fix the underlying architecture.",
+      "expected_output": "A structured performance diagnosis with quantified impact analysis, dependency map between fixes, before/after code, and a migration path with expected improvements at each step.",
+      "files": [],
+      "expectations": [
+        "Includes a structured assessment or health score of the current architecture's performance dimensions",
+        "Presents findings with explicit severity levels and quantified impact (estimated query times, row counts, expected speedups)",
+        "Shows a dependency map or ordering between fixes — which optimization to do first and why",
+        "Provides before/after code for the dashboard query transformation (showing the 15-query pattern vs. consolidated approach)",
+        "Includes a phased migration plan with expected performance improvement at each phase",
+        "Recommends async SQLAlchemy migration",
+        "Suggests query consolidation (JOINs, CTEs, or subqueries)",
+        "Recommends database indexes for aggregation columns",
+        "Suggests materialized views or database-level aggregation",
+        "Addresses caching as complementary to architectural fixes (not dismissive of it)"
+      ]
+    }
+  ]
+}

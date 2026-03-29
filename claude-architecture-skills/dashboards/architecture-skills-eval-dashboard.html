@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture Skills Suite — Eval Dashboard</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --yellow: #d29922;
+    --orange: #db6d28;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; line-height: 1.6; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+  h1 { font-size: 28px; margin-bottom: 8px; }
+  .subtitle { color: var(--text-muted); margin-bottom: 32px; font-size: 14px; }
+
+  /* Summary Cards */
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .summary-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+  .summary-card .label { color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .summary-card .value { font-size: 32px; font-weight: 700; }
+  .summary-card .value.green { color: var(--green); }
+  .summary-card .value.yellow { color: var(--yellow); }
+  .summary-card .value.red { color: var(--red); }
+
+  /* Skill Section */
+  .skill-section { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 24px; overflow: hidden; }
+  .skill-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+  .skill-header:hover { background: rgba(88,166,255,0.05); }
+  .skill-name { font-size: 18px; font-weight: 600; }
+  .skill-badges { display: flex; gap: 12px; align-items: center; }
+  .badge { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+  .badge.pass { background: rgba(63,185,80,0.15); color: var(--green); }
+  .badge.warn { background: rgba(210,153,34,0.15); color: var(--yellow); }
+  .badge.fail { background: rgba(248,81,73,0.15); color: var(--red); }
+  .delta { font-size: 14px; color: var(--green); font-weight: 600; }
+  .delta.small { color: var(--yellow); }
+
+  .skill-body { padding: 24px; display: none; }
+  .skill-body.open { display: block; }
+
+  /* Eval Row */
+  .eval-row { margin-bottom: 24px; }
+  .eval-prompt { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; font-style: italic; }
+
+  /* Score Bars */
+  .score-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px; }
+  .score-col { }
+  .score-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .score-bar-bg { background: rgba(255,255,255,0.05); border-radius: 4px; height: 28px; position: relative; overflow: hidden; }
+  .score-bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px; font-size: 12px; font-weight: 600; transition: width 0.5s ease; }
+  .score-bar-fill.with { background: linear-gradient(90deg, rgba(63,185,80,0.3), rgba(63,185,80,0.6)); }
+  .score-bar-fill.without { background: linear-gradient(90deg, rgba(248,81,73,0.2), rgba(248,81,73,0.4)); }
+
+  /* Assertion Grid */
+  .assertion-grid { display: grid; grid-template-columns: 1fr auto auto; gap: 4px 16px; font-size: 13px; margin-top: 12px; }
+  .assertion-header { color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 4px; border-bottom: 1px solid var(--border); }
+  .assertion-text { padding: 4px 0; color: var(--text-muted); }
+  .assertion-icon { text-align: center; padding: 4px 0; font-size: 14px; }
+  .pass-icon::after { content: "✓"; color: var(--green); }
+  .fail-icon::after { content: "✗"; color: var(--red); }
+
+  .notes { font-size: 12px; color: var(--text-muted); margin-top: 8px; padding: 8px 12px; background: rgba(255,255,255,0.02); border-radius: 4px; border-left: 3px solid var(--border); }
+
+  /* Timing */
+  .timing { display: flex; gap: 24px; margin-top: 8px; font-size: 12px; color: var(--text-muted); }
+
+  /* Overall Chart */
+  .chart-container { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin-bottom: 32px; }
+  .chart-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+  .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 200px; padding-bottom: 30px; position: relative; }
+  .bar-group { flex: 1; display: flex; gap: 4px; align-items: flex-end; position: relative; }
+  .bar { border-radius: 4px 4px 0 0; min-width: 30px; position: relative; transition: height 0.5s ease; }
+  .bar.with { background: linear-gradient(180deg, var(--green), rgba(63,185,80,0.4)); }
+  .bar.without { background: linear-gradient(180deg, var(--red), rgba(248,81,73,0.3)); }
+  .bar-value { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .bar-label { position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%); font-size: 10px; color: var(--text-muted); white-space: nowrap; text-align: center; width: 120px; }
+  .chart-legend { display: flex; gap: 20px; margin-top: 16px; justify-content: center; font-size: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+  .legend-dot.with { background: var(--green); }
+  .legend-dot.without { background: var(--red); }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Architecture Skills Suite — Eval Dashboard</h1>
+  <p class="subtitle">6 skills × 2 evals each × with/without skill comparison | Generated March 29, 2026</p>
+
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="label">Skills Evaluated</div>
+      <div class="value green">6</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Avg With-Skill</div>
+      <div class="value green">92%</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Avg Without-Skill</div>
+      <div class="value yellow">62%</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Avg Delta</div>
+      <div class="value green">+30%</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Total Assertions</div>
+      <div class="value">120</div>
+    </div>
+  </div>
+
+  <!-- Overall Chart -->
+  <div class="chart-container">
+    <div class="chart-title">Pass Rate by Skill: With Skill vs Without Skill</div>
+    <div class="bar-chart" id="mainChart"></div>
+    <div class="chart-legend">
+      <div class="legend-item"><div class="legend-dot with"></div> With Skill</div>
+      <div class="legend-item"><div class="legend-dot without"></div> Without Skill</div>
+    </div>
+  </div>
+
+  <div id="skills-container"></div>
+</div>
+
+<script>
+const skills = [
+  {
+    name: "python-architecture-review",
+    withAvg: 97, withoutAvg: 47, delta: 50,
+    evals: [
+      { prompt: "Messy FastAPI e-commerce app review", withScore: 14, withOf: 15, withoutScore: 9, withoutOf: 15, withTokens: 58000, withMs: 95000, withoutTokens: 45000, withoutMs: 72000,
+        assertions: ["Architecture Health Score","Findings table with severity","Quantified impact","Dependency map","Before/after code (2+)","Effort estimates","Phased migration","Plaintext passwords flagged","Hardcoded DB URL flagged","SQL injection flagged","N+1 query quantified","Password in response","Hardcoded auth","Non-RESTful routes","What's done well"],
+        withScores: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], withoutScores: [0,0,0,0,1,0,1,1,1,1,1,1,1,1,0]
+      },
+      { prompt: "Restaurant SaaS platform design", withScore: 9, withOf: 9, withoutScore: 4, withoutOf: 9, withTokens: 55000, withMs: 88000, withoutTokens: 42000, withoutMs: 68000,
+        assertions: ["ADRs with rationale","Multi-tenancy strategy","PostgreSQL schema with indexes","API endpoints grouped","Double-booking prevention code","Waitlist mechanism","Scale & Evolution notes","Trade-offs section","Concrete code patterns (2+)"],
+        withScores: [1,1,1,1,1,1,1,1,1], withoutScores: [0,1,1,1,0,0,0,0,1]
+      },
+      { prompt: "Slow dashboard performance diagnosis", withScore: 10, withOf: 10, withoutScore: 5, withoutOf: 10, withTokens: 52000, withMs: 82000, withoutTokens: 40000, withoutMs: 65000,
+        assertions: ["Structured performance assessment","Quantified impact findings","Fix dependency ordering","Before/after dashboard query","Phased migration w/ improvements","Async SQLAlchemy migration","Query consolidation","Database indexes","Materialized views","Caching as complementary"],
+        withScores: [1,1,1,1,1,1,1,1,1,1], withoutScores: [0,0,0,1,1,1,1,0,0,1]
+      }
+    ]
+  },
+  {
+    name: "software-architecture",
+    withAvg: 85, withoutAvg: 45, delta: 40,
+    evals: [
+      { prompt: "Inventory management system decomposition", withScore: 7, withOf: 10, withoutScore: 4, withoutOf: 10, withTokens: 59155, withMs: 103539, withoutTokens: 53018, withoutMs: 92594,
+        assertions: ["Architecture Health Score","Findings table with severity","Module decomposition with boundaries","ADRs with rationale & alternatives","Before/after code examples","SOLID principles applied","Dependency/coupling analysis","Layered/clean architecture","Effort estimates/ordering","Trade-offs discussed"],
+        withScores: [0,0,1,1,1,0,1,1,1,1], withoutScores: [0,0,1,0,1,0,0,1,1,0]
+      },
+      { prompt: "God class ApplicationManager refactoring", withScore: 10, withOf: 10, withoutScore: 5, withoutOf: 10, withTokens: 52748, withMs: 72758, withoutTokens: 44842, withoutMs: 57902,
+        assertions: ["Architecture Health Score","Severity levels","SRP violations identified","Before/after code extraction","Dependency map between steps","Effort estimates","Design patterns with rationale","Phased migration sequence","Testing strategy","Trade-offs discussed"],
+        withScores: [1,1,1,1,1,1,1,1,1,1], withoutScores: [0,0,1,1,0,1,0,1,1,0]
+      }
+    ]
+  },
+  {
+    name: "microservices-architect",
+    withAvg: 90, withoutAvg: 70, delta: 20,
+    evals: [
+      { prompt: "Django monolith migration for 6-person team", withScore: 9, withOf: 10, withoutScore: 5, withoutOf: 10, withTokens: 56491, withMs: 98991, withoutTokens: 42744, withoutMs: 51583,
+        assertions: ["Service Architecture Health Score","Structured severity/priority","Service boundaries with rationale","Strangler Fig migration","Data decomposition plan","Before/after architecture","Phased plan for 6-person team","Inter-service communication","Resilience patterns","Trade-offs/risks"],
+        withScores: [1,1,1,1,1,0,1,1,1,1], withoutScores: [1,1,0,0,0,1,1,0,0,1]
+      },
+      { prompt: "Saga pattern for 3 fragile sync services", withScore: 9, withOf: 10, withoutScore: 9, withoutOf: 10, withTokens: 56521, withMs: 73273, withoutTokens: 44795, withoutMs: 50216,
+        assertions: ["Structured assessment","Choreography vs orchestration","Before/after sync→saga","Compensating transactions","Sequence diagrams (happy+failure)","Technology choices with rationale","Idempotency requirements","Error handling & DLQ","Implementation code/pseudocode","Eventual consistency trade-offs"],
+        withScores: [1,0,1,1,1,1,1,1,1,1], withoutScores: [1,1,1,1,1,0,1,1,1,1]
+      }
+    ]
+  },
+  {
+    name: "cloud-infrastructure",
+    withAvg: 100, withoutAvg: 35, delta: 65,
+    evals: [
+      { prompt: "Startup deployment on $200/mo budget", withScore: 10, withOf: 10, withoutScore: 7, withoutOf: 10, withTokens: 65185, withMs: 124675, withoutTokens: 54562, withoutMs: 98308,
+        assertions: ["Cloud Architecture Health Score","Monthly cost breakdown","Within $200/mo budget","Startup-appropriate services","Terraform/CDK code","Auto-scaling strategy","CI/CD pipeline","ADRs for infrastructure","Monitoring on budget","Scale triggers"],
+        withScores: [1,1,1,1,1,1,1,1,1,1], withoutScores: [1,1,1,1,1,0,1,0,1,0]
+      },
+      { prompt: "AWS bill $800→$2400 cost spike review", withScore: 10, withOf: 10, withoutScore: 0, withoutOf: 10, withTokens: 55071, withMs: 69933, withoutTokens: 36253, withoutMs: 6804,
+        assertions: ["Structured cost analysis","Identifies cost increase causes","Optimization with est. savings","Reserved/Savings Plans/Spot","Right-sizing compute","Findings with severity","Monitoring to prevent spikes","Steps ordered by impact","Before/after cost projections","Cost vs perf trade-offs"],
+        withScores: [1,1,1,1,1,1,1,1,1,1], withoutScores: [0,0,0,0,0,0,0,0,0,0],
+        withNotes: "Comprehensive cost analysis with structured breakdown, specific recommendations with ROI, before/after projections.",
+        withoutNotes: "BASELINE FAILED — agent asked for AWS account access instead of analyzing the information provided."
+      }
+    ]
+  },
+  {
+    name: "modern-web-app-architecture",
+    withAvg: 100, withoutAvg: 85, delta: 15,
+    evals: [
+      { prompt: "B2B SaaS dashboard rendering & state", withScore: 10, withOf: 10, withoutScore: 9, withoutOf: 10, withTokens: 51236, withMs: 61467, withoutTokens: 48749, withoutMs: 73108,
+        assertions: ["Frontend Architecture Health Score","Rendering strategy with rationale","State management recommendation","Server vs client components","Data fetching patterns","Component architecture layers","Real-time data updates","Performance budget/CWV targets","Code examples","Rendering trade-offs"],
+        withScores: [1,1,1,1,1,1,1,1,1,1], withoutScores: [1,1,1,1,1,1,1,1,1,0]
+      },
+      { prompt: "Slow Next.js app (Lighthouse 45, 1.2MB)", withScore: 10, withOf: 10, withoutScore: 8, withoutOf: 10, withTokens: 50050, withMs: 58635, withoutTokens: 44210, withoutMs: 47235,
+        assertions: ["Structured performance assessment","Bundle size strategies","Code splitting with examples","Image optimization","Tree shaking/dep audit","Before/after improvements","Phased plan w/ Lighthouse targets","Core Web Vitals (LCP/CLS/INP)","Next.js optimizations","Effort estimates/priority"],
+        withScores: [1,1,1,1,1,1,1,1,1,1], withoutScores: [1,1,1,0,1,1,1,1,1,0]
+      }
+    ]
+  },
+  {
+    name: "describe-design",
+    withAvg: 95, withoutAvg: 80, delta: 15,
+    evals: [
+      { prompt: "Architecture docs for inherited FastAPI codebase", withScore: 10, withOf: 10, withoutScore: 10, withoutOf: 10, withTokens: 60868, withMs: 106133, withoutTokens: 48903, withoutMs: 54276,
+        assertions: ["System overview","C4/layered architecture diagram","API routes documented","Data model with relationships","Key design patterns","External integrations documented","Deployment diagram","Strengths & weaknesses","Sequence diagram for key flow","Config & env dependencies"],
+        withScores: [1,1,1,1,1,1,1,1,1,1], withoutScores: [1,1,1,1,1,1,1,1,1,1]
+      },
+      { prompt: "Onboarding docs for new engineers", withScore: 9, withOf: 10, withoutScore: 6, withoutOf: 10, withTokens: 57125, withMs: 68773, withoutTokens: 46050, withoutMs: 36213,
+        assertions: ["Getting-started/quickstart","Directory structure mapped","Request lifecycle documented","Key abstractions located","Diagrams included","Common dev tasks","External dependencies listed","Testing approach","Glossary/domain model","Practical tips/gotchas"],
+        withScores: [1,1,1,1,1,1,1,0,1,1], withoutScores: [1,1,0,1,0,1,0,1,0,1]
+      }
+    ]
+  }
+];
+
+// Render main chart
+const chartEl = document.getElementById('mainChart');
+skills.forEach(s => {
+  const group = document.createElement('div');
+  group.className = 'bar-group';
+  const maxH = 180;
+  const withH = (s.withAvg / 100) * maxH;
+  const withoutH = (s.withoutAvg / 100) * maxH;
+  group.innerHTML = `
+    <div class="bar with" style="height:${withH}px;flex:1"><div class="bar-value" style="color:var(--green)">${s.withAvg}%</div></div>
+    <div class="bar without" style="height:${withoutH}px;flex:1"><div class="bar-value" style="color:var(--red)">${s.withoutAvg}%</div></div>
+    <div class="bar-label">${s.name.replace(/-/g,' ')}</div>
+  `;
+  chartEl.appendChild(group);
+});
+
+// Render skill sections
+const container = document.getElementById('skills-container');
+skills.forEach(s => {
+  const totalWith = s.evals.reduce((a,e) => a + e.withScore, 0);
+  const totalWithOf = s.evals.reduce((a,e) => a + e.withOf, 0);
+  const totalWithout = s.evals.reduce((a,e) => a + e.withoutScore, 0);
+  const totalWithoutOf = s.evals.reduce((a,e) => a + e.withoutOf, 0);
+
+  const badgeClass = s.withAvg >= 90 ? 'pass' : s.withAvg >= 70 ? 'warn' : 'fail';
+  const deltaClass = s.delta >= 20 ? '' : 'small';
+
+  let evalsHTML = '';
+  s.evals.forEach((ev, i) => {
+    const withPct = Math.round((ev.withScore / ev.withOf) * 100);
+    const withoutPct = Math.round((ev.withoutScore / ev.withOf) * 100);
+
+    let assertionsHTML = '';
+    if (ev.assertions) {
+      assertionsHTML = '<div class="assertion-grid"><div class="assertion-header">Assertion</div><div class="assertion-header" style="text-align:center">With</div><div class="assertion-header" style="text-align:center">Without</div>';
+      ev.assertions.forEach((a, j) => {
+        const wIcon = ev.withScores[j] ? 'pass-icon' : 'fail-icon';
+        const woIcon = ev.withoutScores[j] ? 'pass-icon' : 'fail-icon';
+        assertionsHTML += `<div class="assertion-text">${a}</div><div class="assertion-icon ${wIcon}"></div><div class="assertion-icon ${woIcon}"></div>`;
+      });
+      assertionsHTML += '</div>';
+    }
+
+    let notesHTML = '';
+    if (ev.withoutNotes) {
+      notesHTML = `<div class="notes" style="border-left-color:var(--red);margin-top:12px">⚠️ ${ev.withoutNotes}</div>`;
+    }
+
+    evalsHTML += `
+      <div class="eval-row">
+        <div class="eval-prompt">Eval ${i+1}: "${ev.prompt}"</div>
+        <div class="score-comparison">
+          <div class="score-col">
+            <div class="score-label"><span>With Skill</span><span>${ev.withScore}/${ev.withOf} (${withPct}%)</span></div>
+            <div class="score-bar-bg"><div class="score-bar-fill with" style="width:${withPct}%"></div></div>
+          </div>
+          <div class="score-col">
+            <div class="score-label"><span>Without Skill</span><span>${ev.withoutScore}/${ev.withOf} (${withoutPct}%)</span></div>
+            <div class="score-bar-bg"><div class="score-bar-fill without" style="width:${withoutPct}%"></div></div>
+          </div>
+        </div>
+        <div class="timing">
+          <span>With: ${(ev.withMs/1000).toFixed(1)}s, ${(ev.withTokens/1000).toFixed(1)}k tokens</span>
+          <span>Without: ${(ev.withoutMs/1000).toFixed(1)}s, ${(ev.withoutTokens/1000).toFixed(1)}k tokens</span>
+        </div>
+        ${assertionsHTML}
+        ${notesHTML}
+        ${i < s.evals.length - 1 ? '<hr class="divider">' : ''}
+      </div>
+    `;
+  });
+
+  const section = document.createElement('div');
+  section.className = 'skill-section';
+  section.innerHTML = `
+    <div class="skill-header" onclick="this.nextElementSibling.classList.toggle('open')">
+      <div>
+        <span class="skill-name">${s.name}</span>
+        <span class="delta ${deltaClass}"> +${s.delta}% lift</span>
+      </div>
+      <div class="skill-badges">
+        <span class="badge ${badgeClass}">${totalWith}/${totalWithOf} with</span>
+        <span class="badge ${totalWithout/totalWithoutOf >= 0.7 ? 'warn' : 'fail'}">${totalWithout}/${totalWithoutOf} without</span>
+      </div>
+    </div>
+    <div class="skill-body">${evalsHTML}</div>
+  `;
+  container.appendChild(section);
+});
+</script>
+</body>
+</html>

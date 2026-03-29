@@ -1,0 +1,53 @@
+{
+  "skill_name": "software-architecture",
+  "iteration": 1,
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design an inventory management system decomposition",
+      "with_skill": {
+        "scores": [0, 0, 1, 1, 1, 0, 1, 1, 1, 1],
+        "total": 7,
+        "out_of": 10,
+        "tokens": 59155,
+        "duration_ms": 103539,
+        "notes": "Comprehensive ADRs with rationale and alternatives, clear component decomposition with bounded contexts, code examples, layered architecture, implementation phasing, and explicit trade-offs. Missing: health score metric, findings table with severity levels, and explicit SOLID principles discussion."
+      },
+      "without_skill": {
+        "scores": [0, 0, 1, 0, 1, 0, 0, 1, 1, 0],
+        "total": 4,
+        "out_of": 10,
+        "tokens": 53018,
+        "duration_ms": 92594,
+        "notes": "Strong DDD decomposition with aggregates and value objects, code examples, and implementation phases. Missing: health score, findings table, formal ADRs with alternatives, explicit coupling analysis, SOLID principles, and explicit trade-off discussion."
+      }
+    },
+    {
+      "id": 2,
+      "prompt": "God class ApplicationManager refactoring review",
+      "with_skill": {
+        "scores": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        "total": 10,
+        "out_of": 10,
+        "tokens": 52748,
+        "duration_ms": 72758,
+        "notes": "Comprehensive architecture review with health scoring, severity levels, extensive code examples, ADRs, multiple design patterns, detailed phasing, and explicit trade-off analysis."
+      },
+      "without_skill": {
+        "scores": [0, 0, 1, 1, 0, 1, 0, 1, 1, 0],
+        "total": 5,
+        "out_of": 10,
+        "tokens": 44842,
+        "duration_ms": 57902,
+        "notes": "Practical extraction strategy with phased approach and code examples, but lacks structured health metrics, severity classification, dependency mapping, pattern rationale, and substantive trade-off discussion."
+      }
+    }
+  ],
+  "summary": {
+    "with_skill_avg": 8.5,
+    "without_skill_avg": 4.5,
+    "delta": 4.0,
+    "with_skill_pass_rate": 0.85,
+    "without_skill_pass_rate": 0.45
+  }
+}
