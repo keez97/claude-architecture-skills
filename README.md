@@ -70,14 +70,16 @@ A growing FastAPI backend with hardcoded JWT secrets, broken auth, N+1 query pat
 ### 3. Full-Stack Taskboard (`evals/architecture-workflow/fullstack_app/`)
 FastAPI backend + Next.js frontend + Terraform infrastructure. Backend has N+1 queries and broken auth. Frontend has prop drilling, no caching, inline styles. Terraform has hardcoded passwords, public DB, open security groups. Tests multi-lens selection: `python-architecture-review` + `modern-web-app-architecture` + `cloud-infrastructure` simultaneously.
 
-## Benchmark Results
+## Internal Benchmark Results
 
-Each skill was evaluated on 5 realistic architecture prompts with assertion-based grading. Scores: % of assertions passed (higher is better).
+> **Caveat upfront.** These are **internal A/B benchmarks**, not third-party evaluation. The author wrote both the skills and the assertions they're graded against. Numbers are useful as a development signal — they show that running with the skill produces structured, assertion-passing output more reliably than the unskilled baseline — but they should not be read as independent validation. Methodology, raw JSON, and the test apps themselves are all in this repo so you can audit or re-run.
 
-### Benchmark Summary
+Each skill was tested with the same prompt set in two configurations: **with skill loaded** vs **without skill** (baseline Claude Code). Outputs were graded against a fixed set of binary assertions (15–18 per eval) covering issue identification, recommendation soundness, concrete actionability, and architecture-pattern correctness.
 
-| Skill | With Skill | Without Skill | Delta |
-|-------|-----------|---------------|-------|
+### A/B Comparison Summary
+
+| Skill | With Skill | Baseline (No Skill) | Delta |
+|-------|-----------|---------------------|-------|
 | architecture-workflow | 97.8% | 49.3% | **+48.5%** |
 | python-architecture-review | 97.0% | 47.0% | **+50.0%** |
 | cloud-infrastructure | 100% | 35.0% | **+65.0%** |
@@ -86,7 +88,9 @@ Each skill was evaluated on 5 realistic architecture prompts with assertion-base
 | modern-web-app-architecture | 100% | 85.0% | **+15.0%** |
 | describe-design | 95.0% | 80.0% | **+15.0%** |
 
-**Methodology:** Each skill tested with 5 unique prompts on production-like codebases. Assertions check for: correct identification of issues, sound recommendations, concrete actionable steps, and correct architecture patterns. Scores report % of assertions passing, not subjective ratings.
+**Methodology.** 4 realistic test apps with seeded issues (messy Flask e-commerce, messy FastAPI service, full-stack FastAPI+Next.js+Terraform, monolithic React/TS dashboard). 5 prompts per skill. Binary assertions written before runs. With/without runs use identical prompts and models, only the skill is loaded or not. Mean and standard deviation reported across multiple runs in raw JSON. Two iterations of `architecture-workflow` were run to track skill-revision impact.
+
+**What the numbers do and don't tell you.** They tell you these skills shift Claude's output toward a structured, assertion-passing format more often than the baseline on these specific test apps. They do **not** tell you the skills outperform a human architect, generalize to all codebases, or that the assertions themselves are the right things to measure. Treat them as "the author tested this and shipped the receipts," not as a peer-reviewed benchmark.
 
 ### Raw Results
 
