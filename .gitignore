@@ -2,3 +2,9 @@
 __pycache__/
 node_modules/
 .env
+.venv/
+.next/
+*.db
+package-lock.json
+.terraform/
+.terraform.lock.hcl

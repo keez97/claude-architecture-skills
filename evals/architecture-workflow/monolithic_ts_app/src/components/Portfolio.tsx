@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api, { Portfolio, PortfolioHolding } from '../lib/api';
+import api, { Portfolio as PortfolioData, PortfolioHolding } from '../lib/api';
 
 interface PortfolioProps {
   portfolioId: string;
@@ -16,7 +16,7 @@ interface PortfolioProps {
  * - Direct dependency on monolithic api.ts
  */
 export const Portfolio: React.FC<PortfolioProps> = ({ portfolioId, onError }) => {
-  const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
+  const [portfolio, setPortfolio] = useState<PortfolioData | null>(null);
   const [allocations, setAllocations] = useState<Record<string, number>>({});
   const [editingSymbol, setEditingSymbol] = useState<string | null>(null);
   const [editShares, setEditShares] = useState<number>(0);

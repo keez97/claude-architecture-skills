@@ -9,10 +9,13 @@ import os
 import jwt
 import bcrypt
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:pass@localhost:5432/taskboard")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./taskboard.db")
 SECRET_KEY = "hardcoded-jwt-secret-oops"
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {},
+)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
 
@@ -163,3 +166,6 @@ def dashboard(db: Session = Depends(get_db), user: User = Depends(get_current_us
         user_stats.append({"name": u.name, "total": task_count, "done": done_count})
 
     return {"total": total_tasks, "by_status": by_status, "by_priority": by_priority, "users": user_stats}
+
+# Auto-create tables for local boot. Real codebase would use Alembic migrations.
+Base.metadata.create_all(bind=engine)

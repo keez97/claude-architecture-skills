@@ -59,16 +59,19 @@ Alternatively, extract any `.skill` file (it's a zip archive) to inspect the sou
 
 ## Evaluation Test Cases
 
-Three realistic test apps benchmark the `architecture-workflow` skill:
+Four realistic test apps benchmark the `architecture-workflow` skill. **All four build/boot end-to-end** — run `bash evals/architecture-workflow/verify-evals.sh` to reproduce. The script provisions a Python venv, installs each app's deps, boots the Python apps via `TestClient` / `flask.test_client`, builds the Next.js frontend, and typechecks the TypeScript app.
 
 ### 1. Messy Flask E-commerce (`evals/architecture-workflow/messy_flask_app/`)
-A monolithic Flask app with intentional issues: MD5 passwords, SQL injection, hardcoded secrets, N+1 queries, race conditions, no error handling. Tests single-stack Python review with the `python-architecture-review` lens.
+A monolithic Flask app with intentional issues: MD5 passwords, SQL injection, hardcoded secrets (Stripe/SendGrid), N+1 queries, race conditions, no real auth. SQLite-backed — `pip install -r requirements.txt && python app.py` runs locally. Tests the `python-architecture-review` lens.
 
 ### 2. Messy FastAPI Service (`evals/architecture-workflow/messy_fastapi_app/`)
-A growing FastAPI backend with hardcoded JWT secrets, broken auth, N+1 query patterns, and no input validation. Tests the `python-architecture-review` lens on a different Python framework.
+A growing FastAPI backend with hardcoded JWT secret, broken auth (returns user 1 always), N+1 patterns, no input validation, raw-string SQL. SQLite by default; set `DATABASE_URL=postgresql://...` to test on Postgres. Tests the `python-architecture-review` lens on FastAPI + SQLAlchemy.
 
 ### 3. Full-Stack Taskboard (`evals/architecture-workflow/fullstack_app/`)
-FastAPI backend + Next.js frontend + Terraform infrastructure. Backend has N+1 queries and broken auth. Frontend has prop drilling, no caching, inline styles. Terraform has hardcoded passwords, public DB, open security groups. Tests multi-lens selection: `python-architecture-review` + `modern-web-app-architecture` + `cloud-infrastructure` simultaneously.
+FastAPI backend + Next.js (pages router) frontend + Terraform AWS infra. Backend has N+1 dashboard aggregation, weak auth, hardcoded JWT secret. Frontend has prop drilling, no caching, inline styles, side-effect chart.js registration, full lodash/moment imports for one helper each. Terraform has hardcoded RDS password, RDS in public subnet, open security groups, single-AZ deployment, no remote state. Tests multi-lens selection: `python-architecture-review` + `modern-web-app-architecture` + `cloud-infrastructure` simultaneously. Backend boots via SQLite; frontend builds via `next build`. Terraform layer is review-only (run `terraform validate` separately if you have the CLI installed).
+
+### 4. Monolithic TypeScript Dashboard (`evals/architecture-workflow/monolithic_ts_app/`)
+React + TypeScript + Vite investment dashboard with a single 480-line `api.ts` mixing market data, portfolio management, and user settings. Cross-domain type dependencies (`MarketData` referenced in `PortfolioHolding`), shared `baseFetch` helper, portfolio functions calling market functions. The intended architectural finding is **"refactor with care"** — naive line-range or domain-boundary splitting breaks compilation. Typechecks cleanly under `tsc --noEmit`.
 
 ## Internal Benchmark Results
 
